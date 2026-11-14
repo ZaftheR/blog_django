@@ -17,7 +17,7 @@ El proyecto contiene la estructura inicial de Django y una aplicación llamada `
 **1. Clonar el repositorio**
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+git clone https://github.com/ZaftheR/blog_django.git
 ```
 
 **2. Entrar a la carpeta del proyecto**
@@ -44,13 +44,23 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-**6. Iniciar el servidor**
+**6. Configurar la clave de Django**
+
+En PowerShell, ejecutar:
+
+```powershell
+$env:DJANGO_SECRET_KEY = python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+Este comando genera una clave para utilizar Django de manera local. Debe ejecutarse nuevamente al abrir una nueva terminal.
+
+**7. Iniciar el servidor**
 
 ```bash
 python manage.py runserver
 ```
 
-**7. Abrir el proyecto en el navegador**
+**8. Abrir el proyecto en el navegador**
 
 http://127.0.0.1:8000/
 
