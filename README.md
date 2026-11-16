@@ -4,31 +4,42 @@
 
 Proyecto de un blog web desarrollado con Python y Django como parte de las Preentregas 7 y 8 del curso Python Inicial de Coderhouse.
 
-En la Preentrega 7 se creó la estructura inicial del proyecto Django y la aplicación `posts`.
+En la Preentrega 7 se creó la estructura inicial del proyecto Django y la aplicación `posts`, configurando el entorno de desarrollo, las dependencias y los archivos principales.
 
-En la Preentrega 8 se desarrolló la primera interfaz visual del blog utilizando HTML, CSS, vistas y rutas de Django.
+En la Preentrega 8 se desarrolló la primera interfaz visual del blog utilizando HTML5, CSS3, vistas, rutas y herencia de templates de Django.
 
 Actualmente, el sitio cuenta con una página de inicio, una página Acerca de y un menú de navegación que permite desplazarse entre ambas.
 
 ## Tecnologías utilizadas
 
-- Python
+- Python 3.12
 - Django 6.1.3
 - HTML5
 - CSS3
-- SQLite (configurado por defecto en Django)
+- SQLite
 - Git y GitHub
+
+## Requisitos previos
+
+Para ejecutar el proyecto se necesita:
+
+- Python 3.12 o superior, compatible con la versión de Django utilizada.
+- pip para instalar las dependencias.
+- Git para clonar el repositorio.
+- Una terminal de comandos.
+- Un navegador web.
 
 ## Funcionalidades implementadas
 
 - Página de inicio con un mensaje de bienvenida.
-- Página Acerca de con información sobre el autor y el objetivo del blog.
+- Página Acerca de con información sobre el autor y el propósito del blog.
 - Menú de navegación entre ambas páginas.
 - Plantilla principal `base.html`.
-- Herencia de templates utilizando `{% extends %}` y `{% block content %}`.
+- Herencia de templates mediante `{% extends %}` y `{% block content %}`.
 - Vistas basadas en funciones que utilizan `render()`.
 - Rutas organizadas mediante `path()` e `include()`.
 - Archivos estáticos con estilos CSS personalizados.
+- Configuración de SQLite y migraciones iniciales de Django.
 
 ## Estructura del proyecto
 
@@ -55,6 +66,8 @@ blog_django/
     ├── tests.py
     ├── views.py
     ├── urls.py
+    ├── migrations/
+    │   └── __init__.py
     │
     ├── templates/
     │   └── posts/
@@ -67,6 +80,50 @@ blog_django/
             └── css/
                 └── estilos.css
 ```
+
+## Descripción de las carpetas y archivos principales
+
+### Carpeta blog_project
+
+Contiene la configuración general del proyecto Django.
+
+- `settings.py`: configuración del proyecto, aplicaciones instaladas, idioma, zona horaria y base de datos.
+- `urls.py`: rutas principales del proyecto.
+- `asgi.py`: configuración para servidores ASGI.
+- `wsgi.py`: configuración para servidores WSGI.
+
+### Carpeta posts
+
+Es la aplicación principal del blog.
+
+- `admin.py`: configuración del administrador de Django.
+- `apps.py`: configuración de la aplicación.
+- `models.py`: archivo destinado a los futuros modelos de datos.
+- `tests.py`: archivo destinado a las pruebas automatizadas.
+- `views.py`: contiene las funciones que muestran las páginas HTML.
+- `urls.py`: define las rutas de la aplicación.
+
+### Carpeta migrations
+
+Contiene los archivos de migraciones de la aplicación.
+
+Las migraciones permiten administrar los cambios en la estructura de la base de datos.
+
+### Carpeta templates
+
+Contiene los archivos HTML del sitio.
+
+- `base.html`: plantilla principal con el encabezado, menú de navegación y pie de página.
+- `inicio.html`: página principal del blog.
+- `acerca.html`: página con información sobre el autor y el objetivo del sitio.
+
+Las páginas `inicio.html` y `acerca.html` heredan su estructura de `base.html`.
+
+### Carpeta static
+
+Contiene los archivos estáticos utilizados para el diseño del sitio.
+
+El archivo `posts/static/posts/css/estilos.css` define los estilos visuales del blog.
 
 ## Instalación y ejecución
 
@@ -100,9 +157,11 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+El archivo `requirements.txt` contiene las dependencias necesarias para ejecutar el proyecto y está guardado con codificación UTF-8.
+
 ### 6. Configurar la clave secreta de Django
 
-Por seguridad, la clave secreta no está incluida directamente en el código del proyecto.
+Por seguridad, la clave secreta del proyecto no se encuentra escrita directamente en el código.
 
 En Windows PowerShell, ejecutar:
 
@@ -112,13 +171,43 @@ $env:DJANGO_SECRET_KEY = python -c "from django.core.management.utils import get
 
 Esta variable se configura para la sesión actual de la terminal. Si se abre una terminal nueva, será necesario configurarla nuevamente.
 
-### 7. Iniciar el servidor de Django
+### 7. Aplicar las migraciones de la base de datos
+
+Antes de iniciar el servidor, ejecutar:
+
+```bash
+python manage.py migrate
+```
+
+Este comando prepara las tablas de la base de datos necesarias para las aplicaciones de Django.
+
+Si las migraciones ya fueron aplicadas, puede aparecer el mensaje:
+
+```text
+No migrations to apply.
+```
+
+Esto indica que no hay migraciones pendientes.
+
+### 8. Comprobar la configuración de Django
+
+```bash
+python manage.py check
+```
+
+Si la configuración es correcta, Django mostrará:
+
+```text
+System check identified no issues (0 silenced).
+```
+
+### 9. Iniciar el servidor
 
 ```bash
 python manage.py runserver
 ```
 
-### 8. Abrir el sitio en el navegador
+### 10. Abrir el sitio en el navegador
 
 Página de inicio:
 
@@ -134,28 +223,26 @@ La aplicación `posts` contiene las vistas, rutas, templates y archivos estátic
 
 ### Vistas
 
-En `posts/views.py` se encuentran las funciones:
+En `posts/views.py` se encuentran dos funciones:
 
 - `inicio()`: muestra la página principal.
 - `acerca()`: muestra la información sobre el blog.
 
-Ambas utilizan la función `render()` de Django.
+Ambas utilizan la función `render()` de Django para devolver los templates HTML correspondientes.
 
 ### Rutas
 
-En `posts/urls.py` se encuentran las rutas de Inicio y Acerca de.
+En `posts/urls.py` se definen las rutas de Inicio y Acerca de mediante `path()`.
 
 Estas rutas están conectadas con el proyecto principal mediante `include()` en `blog_project/urls.py`.
 
-### Templates
+### Herencia de templates
 
-Los archivos HTML se encuentran en `posts/templates/posts/`.
+El archivo `base.html` contiene la estructura HTML5 general del sitio, incluyendo el menú de navegación.
 
-- `base.html`: plantilla principal que contiene la estructura HTML5, el encabezado, el menú de navegación y el pie de página.
-- `inicio.html`: página principal del blog.
-- `acerca.html`: página con información sobre el autor y el propósito del sitio.
+Las páginas `inicio.html` y `acerca.html` utilizan `{% extends 'posts/base.html' %}` para reutilizar esa estructura.
 
-Las páginas `inicio.html` y `acerca.html` heredan su estructura de `base.html`.
+El contenido particular de cada página se coloca dentro del bloque `{% block content %}`.
 
 ### Archivos estáticos
 
@@ -163,21 +250,33 @@ El archivo `estilos.css` se encuentra en:
 
 `posts/static/posts/css/estilos.css`
 
-Contiene estilos para:
+Contiene reglas para:
 
 - Tipografía.
-- Colores del sitio.
+- Colores generales.
 - Encabezado.
 - Menú de navegación.
 - Contenido principal.
 - Títulos.
 - Pie de página.
 
-El CSS se vincula desde `base.html` utilizando `{% load static %}` y la etiqueta `{% static 'posts/css/estilos.css' %}`.
+El CSS se vincula desde `base.html` utilizando `{% load static %}` y `{% static 'posts/css/estilos.css' %}`.
+
+## Seguridad y control de versiones
+
+El proyecto utiliza un archivo `.gitignore` para evitar incorporar archivos innecesarios o privados al repositorio.
+
+Entre los elementos ignorados se encuentran:
+
+- `venv/`: entorno virtual de Python.
+- `__pycache__/`: archivos temporales de Python.
+- `*.pyc`: archivos compilados de Python.
+- `.env`: archivo de variables de entorno.
+- `db.sqlite3`: base de datos local.
+
+La configuración `SECRET_KEY` se obtiene desde una variable de entorno para evitar publicar una clave secreta en GitHub.
 
 ## Pruebas realizadas
-
-Se realizaron las siguientes verificaciones para comprobar el funcionamiento del proyecto.
 
 ### 1. Comprobación de Django
 
@@ -187,13 +286,32 @@ Se ejecutó:
 python manage.py check
 ```
 
-Resultado obtenido:
+Resultado:
 
 ```text
 System check identified no issues (0 silenced).
 ```
 
-### 2. Ejecución del servidor
+### 2. Verificación de migraciones
+
+Se ejecutó:
+
+```bash
+python manage.py migrate
+```
+
+Resultado:
+
+```text
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+```
+
+Se comprobó que las migraciones estaban aplicadas correctamente.
+
+### 3. Ejecución del servidor
 
 Se ejecutó:
 
@@ -201,43 +319,56 @@ Se ejecutó:
 python manage.py runserver
 ```
 
-El servidor inició correctamente y permitió acceder al sitio desde el navegador.
+El servidor inició correctamente después de configurar la variable de entorno `DJANGO_SECRET_KEY`.
 
-### 3. Página de inicio
+### 4. Página de inicio
 
-Se comprobó que la dirección `http://127.0.0.1:8000/` muestra la página de bienvenida.
+Se verificó que la dirección `http://127.0.0.1:8000/` muestra correctamente la página de bienvenida del blog.
 
-### 4. Página Acerca de
+### 5. Página Acerca de
 
-Se comprobó que la dirección `http://127.0.0.1:8000/acerca/` muestra la información del blog.
+Se verificó que la dirección `http://127.0.0.1:8000/acerca/` muestra la información sobre el blog y su autor.
 
-### 5. Navegación
+### 6. Navegación
 
-Se verificó que los enlaces del menú permiten navegar entre Inicio y Acerca de sin errores.
+Se comprobó que los enlaces del menú permiten navegar entre Inicio y Acerca de sin errores.
 
-### 6. Archivos estáticos
+### 7. Archivos estáticos
 
-Se utilizaron las herramientas de desarrollador del navegador para comprobar que `estilos.css` se carga correctamente.
+Se utilizaron las herramientas de desarrollador del navegador para comprobar que el archivo `estilos.css` carga correctamente.
 
-Se verificó una respuesta HTTP `200` y que los estilos visuales se aplican en ambas páginas.
+Se verificó una respuesta HTTP `200` y que los estilos se aplican visualmente.
+
+### 8. Codificación de requirements.txt
+
+Se verificó que el archivo `requirements.txt` puede leerse correctamente utilizando codificación UTF-8.
+
+### 9. Archivos temporales de Git
+
+Se comprobó que el repositorio ya no mantiene archivos `__pycache__` ni `*.pyc` bajo seguimiento de Git.
 
 ## Estado del proyecto
 
-El proyecto cumple con los requisitos principales de la Preentrega 8:
+El proyecto incluye las funcionalidades solicitadas en las Preentregas 7 y 8:
 
-- Estructura de templates y archivos estáticos.
-- Herencia HTML con `base.html`.
-- Vistas con `render()`.
+- Estructura inicial de Django.
+- Aplicación `posts` registrada.
+- Configuración de idioma y zona horaria.
+- Configuración de la clave secreta mediante variable de entorno.
+- Dependencias documentadas.
+- Migraciones de Django aplicadas.
+- Templates HTML con herencia.
+- Vistas utilizando `render()`.
 - Rutas conectadas mediante `include()`.
 - Navegación funcional.
 - Estilos CSS personalizados.
 
-En futuras etapas se podrán incorporar publicaciones dinámicas, modelos de datos, formularios y otras funcionalidades.
+En futuras etapas se podrán incorporar modelos de publicaciones, formularios, operaciones CRUD y otras funcionalidades dinámicas.
 
 ## Autor
 
 Proyecto desarrollado como parte del curso Python Inicial de Coderhouse.
 
-## Repositorio
+## Repositorio de GitHub
 
 https://github.com/ZaftheR/blog_django
