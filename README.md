@@ -372,3 +372,82 @@ Proyecto desarrollado como parte del curso Python Inicial de Coderhouse.
 ## Repositorio de GitHub
 
 https://github.com/ZaftheR/blog_django
+
+## Preentrega 9 - Modelos y administración en Django
+
+En esta etapa se incorporó la persistencia de publicaciones mediante SQLite y el ORM de Django.
+
+### Modelo Post
+
+Se creó el modelo `Post` en `posts/models.py`, con los siguientes campos:
+
+- `titulo`: título de la publicación.
+- `contenido`: texto de la publicación.
+- `autor`: nombre del autor.
+- `fecha_creacion`: fecha generada automáticamente con `auto_now_add=True`.
+- `estado`: permite seleccionar borrador, publicado o archivado.
+
+El modelo implementa el método `__str__()` para representar cada publicación mediante su título.
+
+### Migraciones y base de datos
+
+Para generar y aplicar las migraciones, ejecutar:
+
+```powershell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+La base de datos utiliza SQLite mediante el archivo local `db.sqlite3`, excluido del repositorio por `.gitignore`.
+
+### Panel de administración
+
+El modelo `Post` está registrado en `posts/admin.py` mediante una clase `PostAdmin`.
+
+El administrador permite visualizar el título, autor, estado y fecha de creación de cada publicación, además de buscar y filtrar los registros.
+
+Para crear una cuenta de administrador, ejecutar:
+
+```powershell
+python manage.py createsuperuser
+```
+
+Después de iniciar el servidor con `python manage.py runserver`, acceder a:
+
+http://127.0.0.1:8000/admin/
+
+Ingresar con el superusuario creado para administrar las publicaciones.
+
+### Listado dinámico
+
+Se incorporó la página de publicaciones:
+
+http://127.0.0.1:8000/posts/
+
+La vista `lista_posts()` consulta la base de datos mediante:
+
+```python
+Post.objects.filter(estado="publicado").order_by("-fecha_creacion")
+```
+
+El template `lista_posts.html` utiliza `{% for post in posts %}` para mostrar dinámicamente el título, contenido, autor y fecha de las publicaciones.
+
+Solamente se muestran los posts publicados, ordenados desde el más reciente.
+
+### Pruebas realizadas
+
+- Se generaron y aplicaron las migraciones del modelo Post.
+- Se configuró correctamente el panel administrativo de Django.
+- Se creó un superusuario y se comprobó el acceso a `/admin/`.
+- Se cargaron tres publicaciones con distintos estados.
+- Se verificó que `/posts/` muestra únicamente las publicaciones publicadas.
+- Se mantuvieron las páginas Inicio y Acerca de, la herencia HTML y los estilos CSS de la Preentrega 8.
+
+### Estructura incorporada
+
+- `posts/models.py`: definición del modelo Post.
+- `posts/admin.py`: configuración del panel administrativo.
+- `posts/migrations/0001_initial.py`: migración inicial del modelo.
+- `posts/views.py`: consulta de publicaciones mediante ORM.
+- `posts/urls.py`: ruta del listado de publicaciones.
+- `posts/templates/posts/lista_posts.html`: template dinámico del listado.
