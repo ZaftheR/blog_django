@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post
 from .forms import PostForm
+from django.contrib.auth.decorators import login_required
 
 
 # Vista de la página de inicio
@@ -37,6 +38,7 @@ def detalle_post(request, post_id):
 
 
 # Vista para crear un nuevo post
+@login_required
 def crear_post(request):
     if request.method == 'POST':
         formulario = PostForm(request.POST, request.FILES)
@@ -54,6 +56,7 @@ def crear_post(request):
 
 
 # Vista para editar un post existente
+@login_required
 def editar_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -77,6 +80,7 @@ def editar_post(request, post_id):
 
 
 # Vista para eliminar un post
+@login_required
 def eliminar_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 

@@ -611,3 +611,208 @@ Se completó la implementación del modelo Post con imágenes, el formulario Mod
 El proyecto continúa utilizando el mismo repositorio de las entregas anteriores.
 
 Repositorio: https://github.com/ZaftheR/blog_django
+
+---
+
+## Preentrega 11 - Autenticación, Usuarios y Perfil en Django
+
+En esta etapa se incorporó un sistema de autenticación y gestión de usuarios al blog, utilizando las herramientas nativas de Django.
+
+Los visitantes pueden registrarse, iniciar sesión y cerrar sesión. Cada usuario tiene un perfil propio con biografía, enlace web opcional y avatar.
+
+También se implementó la protección de las operaciones CRUD para que solamente los usuarios autenticados puedan crear, editar y eliminar publicaciones.
+
+### Aplicación accounts
+
+Se creó una nueva aplicación llamada `accounts` para organizar las funcionalidades relacionadas con los usuarios.
+
+Sus archivos principales son:
+
+- `models.py`: contiene el modelo Perfil.
+- `forms.py`: contiene los formularios de registro y edición del perfil.
+- `views.py`: contiene las vistas de registro, visualización y edición del perfil.
+- `urls.py`: define las rutas de autenticación y perfiles.
+- `admin.py`: registra el modelo Perfil en el administrador.
+- `templates/accounts/`: contiene las páginas HTML de autenticación y perfil.
+
+### Registro de usuarios
+
+Se implementó `RegistroForm`, un formulario personalizado basado en `UserCreationForm` de Django.
+
+El formulario permite ingresar:
+
+- Nombre de usuario.
+- Correo electrónico.
+- Contraseña.
+- Confirmación de contraseña.
+
+La vista `registro()` valida los datos, crea el usuario y genera automáticamente su perfil asociado mediante `Perfil.objects.create(user=usuario)`.
+
+Ambas operaciones se realizan dentro de una transacción para mantener la consistencia de los datos.
+
+Ruta de registro:
+
+`/accounts/registro/`
+
+### Inicio y cierre de sesión
+
+Se implementaron las vistas nativas de autenticación de Django:
+
+- `LoginView`: permite iniciar sesión.
+- `LogoutView`: permite cerrar sesión.
+
+Las rutas disponibles son:
+
+- `/accounts/login/`: inicio de sesión.
+- `/accounts/logout/`: cierre de sesión mediante POST.
+
+En `settings.py` se configuraron las siguientes redirecciones:
+
+```python
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'lista_posts'
+LOGOUT_REDIRECT_URL = 'lista_posts'
+```
+
+Después de iniciar o cerrar sesión, el usuario es redirigido al listado de publicaciones.
+
+### Modelo Perfil
+
+Se creó el modelo `Perfil` en `accounts/models.py`.
+
+Este modelo se relaciona con el usuario de Django mediante `OneToOneField`, permitiendo que cada cuenta tenga un único perfil asociado.
+
+Contiene los siguientes campos:
+
+- `user`: usuario asociado al perfil.
+- `biografia`: descripción personal opcional.
+- `link_web`: enlace web opcional.
+- `avatar`: imagen de perfil opcional.
+
+El avatar utiliza `ImageField` y se almacena dentro de `media/avatares/`.
+
+Se generaron y aplicaron las migraciones correspondientes mediante:
+
+```powershell
+python manage.py makemigrations accounts
+python manage.py migrate
+```
+
+El modelo Perfil también fue registrado en el panel administrativo de Django.
+
+### Visualización y edición del perfil
+
+Cada usuario autenticado puede consultar su información desde:
+
+`/accounts/perfil/`
+
+La página muestra:
+
+- Nombre de usuario.
+- Correo electrónico.
+- Biografía.
+- Enlace web, cuando existe.
+- Avatar, cuando existe.
+
+La edición está disponible en:
+
+`/accounts/perfil/editar/`
+
+Se creó `PerfilForm`, basado en `ModelForm`, para modificar la biografía, el enlace web y el avatar.
+
+La vista de edición utiliza `request.POST`, `request.FILES` e `instance=perfil_usuario` para guardar los cambios en el perfil existente.
+
+El formulario HTML incluye `enctype="multipart/form-data"` para permitir la carga de imágenes.
+
+### Protección de publicaciones
+
+Se incorporó el decorador `@login_required` en las siguientes vistas de `posts/views.py`:
+
+- `crear_post()`
+- `editar_post()`
+- `eliminar_post()`
+
+Los usuarios que no iniciaron sesión son redirigidos automáticamente al formulario de autenticación.
+
+Por ejemplo, al intentar acceder a `/posts/crear/`, un visitante es redirigido a:
+
+`/accounts/login/?next=/posts/crear/`
+
+Las vistas de listado y detalle de publicaciones continúan siendo públicas.
+
+### Navegación dinámica
+
+Se actualizó el template `posts/base.html` para mostrar diferentes opciones según el estado de autenticación.
+
+**Visitantes no autenticados:**
+
+- Inicio.
+- Acerca de.
+- Publicaciones.
+- Iniciar sesión.
+- Registrarse.
+
+**Usuarios autenticados:**
+
+- Inicio.
+- Acerca de.
+- Publicaciones.
+- Mi perfil.
+- Crear post.
+- Cerrar sesión.
+
+El cierre de sesión se realiza mediante un formulario POST con protección CSRF.
+
+### Configuración multimedia
+
+Se reutilizó la configuración de la Preentrega 10:
+
+```python
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+```
+
+Las imágenes de publicaciones se guardan en `media/posts/` y los avatares en `media/avatares/`.
+
+La visualización de archivos multimedia está habilitada durante el desarrollo local.
+
+### Pruebas realizadas
+
+Se comprobaron las siguientes funcionalidades:
+
+1. Registro de un usuario nuevo.
+2. Creación automática del perfil asociado.
+3. Inicio de sesión con las credenciales registradas.
+4. Redirección al listado después del login.
+5. Visualización del perfil del usuario autenticado.
+6. Edición del perfil y carga de avatar.
+7. Visualización correcta de la imagen de perfil.
+8. Cierre de sesión y actualización del menú.
+9. Redirección al login al intentar crear publicaciones sin autenticación.
+10. Protección de las vistas de edición y eliminación.
+11. Acceso público al listado y al detalle de publicaciones.
+12. Conservación del CRUD con imágenes de la Preentrega 10.
+
+Las comprobaciones se realizaron en el entorno de desarrollo local utilizando Django y SQLite.
+
+### Cómo probar la autenticación
+
+Después de instalar las dependencias, configurar `DJANGO_SECRET_KEY`, aplicar las migraciones y ejecutar `python manage.py runserver`:
+
+1. Ingresar a `/accounts/registro/` y crear una cuenta.
+2. Iniciar sesión desde `/accounts/login/`.
+3. Abrir `/accounts/perfil/` para consultar el perfil.
+4. Utilizar `/accounts/perfil/editar/` para modificar la biografía y subir un avatar.
+5. Crear una publicación desde `/posts/crear/`.
+6. Cerrar sesión desde el menú.
+7. Comprobar que las operaciones de creación, edición y eliminación requieren autenticación.
+
+La base de datos SQLite y las imágenes cargadas durante el desarrollo se mantienen localmente y no se incluyen en el repositorio.
+
+### Estado de la Preentrega 11
+
+Se implementó la autenticación de usuarios, el registro personalizado, el modelo Perfil con relación OneToOne, la edición de biografía y avatar, la navegación condicional y la protección de las operaciones CRUD.
+
+El proyecto continúa utilizando el mismo repositorio de GitHub de las entregas anteriores.
+
+Repositorio: https://github.com/ZaftheR/blog_django

@@ -1,0 +1,25 @@
+
+{% extends 'posts/base.html' %}
+
+{% block content %}
+
+<h1>Registrarse</h1>
+
+<p>Completá los siguientes datos para crear tu cuenta.</p>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ formulario.as_p }}
+
+    <button type="submit" class="boton">
+        Crear cuenta
+    </button>
+</form>
+
+<p>
+    ¿Ya tenés una cuenta?
+    <a href="{% url 'login' %}" class="boton">Iniciá sesión</a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+
+{% extends 'posts/base.html' %}
+
+{% block content %}
+
+<h1>Editar mi perfil</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ formulario.as_p }}
+
+    <button type="submit" class="boton">
+        Guardar cambios
+    </button>
+</form>
+
+<p>
+    <a href="{% url 'perfil' %}" class="boton">
+        Volver a mi perfil
+    </a>
+</p>
+
+{% endblock %}
