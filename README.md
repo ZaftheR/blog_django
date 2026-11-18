@@ -18,6 +18,7 @@ Actualmente, el sitio cuenta con una página de inicio, una página Acerca de y 
 - CSS3
 - SQLite
 - Git y GitHub
+- Pillow 13.0.0
 
 ## Requisitos previos
 
@@ -451,3 +452,162 @@ Solamente se muestran los posts publicados, ordenados desde el más reciente.
 - `posts/views.py`: consulta de publicaciones mediante ORM.
 - `posts/urls.py`: ruta del listado de publicaciones.
 - `posts/templates/posts/lista_posts.html`: template dinámico del listado.
+
+---
+
+## Preentrega 10 - CRUD de Posts con Imágenes en Django
+
+En esta etapa se implementó un sistema CRUD completo para gestionar publicaciones desde la interfaz web del blog, incorporando formularios dinámicos y soporte para imágenes.
+
+### Modelo Post con imágenes
+
+Se agregó al modelo `Post`, ubicado en `posts/models.py`, el campo:
+
+```python
+imagen = models.ImageField(
+    upload_to='posts/',
+    null=True,
+    blank=True
+)
+```
+
+Este campo permite asociar una imagen opcional a cada publicación, manteniendo la compatibilidad con los registros existentes.
+
+Para actualizar la base de datos se ejecutaron:
+
+```powershell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Formulario ModelForm
+
+Se creó el archivo `posts/forms.py`, que contiene la clase `PostForm`, basada en `forms.ModelForm`.
+
+El formulario permite completar los campos:
+
+- Título.
+- Contenido.
+- Autor.
+- Estado.
+- Imagen.
+
+Las vistas de creación y edición utilizan `request.POST` y `request.FILES` para procesar tanto los datos de texto como las imágenes.
+
+El template `post_form.html` utiliza `method="POST"`, `enctype="multipart/form-data"` y `{% csrf_token %}`.
+
+### Operaciones CRUD
+
+Se implementaron las siguientes funcionalidades:
+
+| Operación | Descripción | Ruta |
+|---|---|---|
+| Create | Crear publicaciones con imágenes | `/posts/crear/` |
+| Read | Listar publicaciones publicadas | `/posts/` |
+| Read | Consultar el detalle de un post | `/posts/<id>/` |
+| Update | Editar publicaciones e imágenes | `/posts/<id>/editar/` |
+| Delete | Eliminar publicaciones con confirmación | `/posts/<id>/eliminar/` |
+
+Las rutas utilizan el identificador numérico de cada publicación.
+
+El listado principal muestra únicamente publicaciones con estado `publicado`, ordenadas desde la más reciente.
+
+### Configuración de archivos multimedia
+
+Se incorporaron las siguientes configuraciones en `blog_project/settings.py`:
+
+```python
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+```
+
+Las imágenes cargadas se almacenan en el directorio `media/posts/`.
+
+En `blog_project/urls.py` se configuró el acceso a los archivos multimedia durante el desarrollo local, utilizando `static()` cuando `DEBUG` está habilitado.
+
+Los templates verifican si una publicación tiene imagen antes de intentar mostrarla.
+
+### Dependencias
+
+Para trabajar con el campo `ImageField` se instaló Pillow.
+
+El entorno utilizado incluye:
+
+- Python 3.12.10.
+- Django 6.1.3.
+- Pillow 13.0.0.
+- SQLite.
+
+Las dependencias están registradas en `requirements.txt`.
+
+Para instalarlas:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### Templates incorporados
+
+Se crearon o actualizaron los siguientes archivos:
+
+- `lista_posts.html`: listado de publicaciones con enlaces de creación y detalle.
+- `detalle_post.html`: visualización completa de una publicación.
+- `post_form.html`: formulario utilizado para crear y editar publicaciones.
+- `post_confirm_delete.html`: confirmación antes de eliminar un post.
+
+Todos mantienen la herencia desde `posts/base.html`.
+
+También se incorporaron estilos CSS para presentar los enlaces de creación y visualización como botones azules con esquinas redondeadas.
+
+### Pruebas realizadas
+
+Se comprobaron las siguientes funcionalidades:
+
+1. Creación de publicaciones con imágenes.
+2. Visualización de imágenes en el listado y en el detalle.
+3. Edición de publicaciones existentes.
+4. Actualización y reemplazo de imágenes.
+5. Creación, edición y eliminación de una publicación de prueba.
+6. Confirmación previa a la eliminación.
+7. Navegación entre las páginas del blog.
+8. Funcionamiento de las rutas y templates.
+9. Aplicación de migraciones en SQLite.
+10. Verificación de la configuración mediante `python manage.py check`.
+
+Las pruebas se realizaron utilizando el servidor local de Django.
+
+### Cómo probar el CRUD
+
+Una vez instalado el proyecto, configurada la variable `DJANGO_SECRET_KEY` y aplicadas las migraciones, iniciar el servidor:
+
+```powershell
+python manage.py runserver
+```
+
+Ingresar a:
+
+http://127.0.0.1:8000/posts/
+
+Seleccionar **Crear publicación**, completar el formulario, elegir una imagen JPG o PNG y guardar.
+
+La publicación debe aparecer en el listado si se seleccionó el estado `Publicado`.
+
+Desde el detalle se puede editar la publicación, cambiar su imagen o acceder a la confirmación de eliminación.
+
+La base de datos SQLite es local y no se incluye en el repositorio. Por lo tanto, una instalación nueva comenzará sin publicaciones cargadas.
+
+### Alcance
+
+El proyecto está preparado para ejecutarse en un entorno de desarrollo local.
+
+Esta preentrega no incorpora autenticación ni permisos para proteger las operaciones de creación, edición y eliminación. Estas funcionalidades deberán protegerse antes de publicar la aplicación en Internet.
+
+---
+
+## Estado de la Preentrega 10
+
+Se completó la implementación del modelo Post con imágenes, el formulario ModelForm, las operaciones CRUD, la configuración multimedia y las pruebas funcionales.
+
+El proyecto continúa utilizando el mismo repositorio de las entregas anteriores.
+
+Repositorio: https://github.com/ZaftheR/blog_django

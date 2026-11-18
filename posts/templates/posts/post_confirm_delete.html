@@ -1,0 +1,27 @@
+
+{% extends 'posts/base.html' %}
+
+{% block content %}
+
+<h1>Eliminar publicación</h1>
+
+<p>
+    ¿Estás seguro de que querés eliminar
+    la publicación "{{ post.titulo }}"?
+</p>
+
+<p>Esta acción no se puede deshacer.</p>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <button type="submit">
+        Sí, eliminar publicación
+    </button>
+</form>
+
+<a href="{% url 'detalle_post' post.id %}" class="boton">
+    Cancelar y volver
+</a>
+
+{% endblock %}

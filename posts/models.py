@@ -19,7 +19,20 @@ class Post(models.Model):
         choices=ESTADOS,
         default='borrador'
     )
-
+    
+    # Imagen opcional de la publicación
+    imagen = models.ImageField(
+    upload_to='posts/',
+    null=True,
+    blank=True
+    )
+    
+    
     def __str__(self):
         return self.titulo
+
+
+
+
+
 

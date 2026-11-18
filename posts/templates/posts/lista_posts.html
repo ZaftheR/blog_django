@@ -3,35 +3,46 @@
 
 {% block content %}
 
-    <section>
-        <h2>Publicaciones del Blog</h2>
+<h1>Publicaciones del blog</h1>
 
-        <p>Estas son las publicaciones disponibles en nuestro blog.</p>
+<p>
+    <a href="{% url 'crear_post' %}" class="boton">
+        + Crear publicación
+    </a>
+</p>
 
-        {% for post in posts %}
+<hr>
 
-            <article>
-                <h3>{{ post.titulo }}</h3>
+{% for post in posts %}
 
-                <p>{{ post.contenido }}</p>
+    <article>
+        <h2>{{ post.titulo }}</h2>
 
-                <p>
-                    <strong>Autor:</strong> {{ post.autor }}
-                </p>
+        <p><strong>Autor:</strong> {{ post.autor }}</p>
 
-                <p>
-                    <strong>Fecha:</strong> {{ post.fecha_creacion|date:"d/m/Y" }}
-                </p>
+        <p><strong>Fecha:</strong> {{ post.fecha_creacion }}</p>
 
-                <hr>
-            </article>
+        {% if post.imagen %}
+            <img
+                src="{{ post.imagen.url }}"
+                alt="Imagen de {{ post.titulo }}"
+                style="max-width: 300px; width: 100%; height: auto;"
+            >
+        {% endif %}
 
-        {% empty %}
+        <p>{{ post.contenido|truncatewords:30 }}</p>
 
-            <p>No hay publicaciones disponibles.</p>
+        <a href="{% url 'detalle_post' post.id %}" class="boton">
+            Ver publicación
+        </a>
+    </article>
 
-        {% endfor %}
+    <hr>
 
-    </section>
+{% empty %}
+
+    <p>Todavía no hay publicaciones disponibles.</p>
+
+{% endfor %}
 
 {% endblock %}
